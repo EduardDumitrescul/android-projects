@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -32,26 +31,12 @@
             android:text="@string/false_button" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/next_button"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/prev_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/arrow_left"/>
-
-
-        <ImageButton
-            android:id="@+id/next_button"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/arrow_right"/>
-
-    </LinearLayout>
-
-
+        android:layout_width="wrap_content"
+        android:text="@string/next_button"
+        android:drawableEnd="@drawable/arrow_right"
+        android:drawablePadding="4dp"/>
 
 </LinearLayout>
