@@ -1,9 +1,14 @@
 package com.example.workoutcompanion
 
+import androidx.annotation.InspectableProperty
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
-class Exercise() {
-    val id_exercise: UUID = UUID.randomUUID()
-    var name: String = ""
-    var equipment: String = ""
+@Entity
+class Exercise(@PrimaryKey
+               val id_exercise: UUID = UUID.randomUUID(),
+               var name: String = "",
+               var equipment: String = "") {
+
 }
