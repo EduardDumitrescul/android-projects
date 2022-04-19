@@ -2,6 +2,7 @@ package com.example.workoutcompanion
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
-import java.util.*
+
+private const val TAG = "ExerciseListFragment"
 
 class ExerciseListFragment: Fragment() {
 
@@ -90,10 +91,11 @@ class ExerciseListFragment: Fragment() {
         exerciseListViewModel.exerciseListLiveData.observe(
             viewLifecycleOwner,
             Observer { exercises->
-                exercises?.let {}
-                updateUI(exercises)
-            }
-        )
+                exercises?.let {
+                    Log.d(TAG, "onViewCreated()")
+                    updateUI(exercises)
+                }
+            })
     }
 
     override fun onDetach() {
@@ -104,6 +106,7 @@ class ExerciseListFragment: Fragment() {
     private inner class ExerciseAdapter(var exercises: List<Exercise>): RecyclerView.Adapter<ExerciseHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseHolder {
+            Log.d(TAG, "ExerciseAdapter ${exercises.size}")
             val view = layoutInflater.inflate(R.layout.fragment_exercise, parent, false)
             return ExerciseHolder(view)
         }

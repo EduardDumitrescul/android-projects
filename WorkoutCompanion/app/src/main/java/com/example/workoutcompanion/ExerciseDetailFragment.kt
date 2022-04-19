@@ -37,10 +37,10 @@ class ExerciseDetailFragment(): Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_exercise, container, false)
+        val view = inflater.inflate(R.layout.fragment_exercise_detail, container, false)
 
-        nameField = view.findViewById(R.id.exercise_name)
-        equipmentField = view.findViewById(R.id.exercise_equipment)
+        nameField = view.findViewById(R.id.exercise_detail_name)
+        equipmentField = view.findViewById(R.id.exercise_detail_equipment)
         saveButton = view.findViewById(R.id.save_button)
         saveButton.setOnClickListener {
             exerciseDetailViewModel.saveExercise(exercise)
