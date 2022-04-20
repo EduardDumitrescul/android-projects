@@ -53,7 +53,6 @@ class ExerciseListFragment: Fragment() {
         newExerciseButton = view.findViewById(R.id.exercise_new_button)
         newExerciseButton.setOnClickListener {
             callbacks?.onNewExercise()
-
         }
 
         return view
@@ -95,6 +94,7 @@ class ExerciseListFragment: Fragment() {
             Observer { exercises->
                 exercises?.let {
                     Log.d(TAG, "onViewCreated() ${exercises.size}")
+                    exerciseListViewModel.reload()
                     updateUI(exercises)
                 }
             })

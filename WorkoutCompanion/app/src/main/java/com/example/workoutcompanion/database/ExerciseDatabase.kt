@@ -6,7 +6,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.example.workoutcompanion.Exercise
 
-@Database(entities = [Exercise::class], version = 1)
+@Database(entities = [ExerciseEntity::class], version = 1)
 @TypeConverters(ExerciseTypeConverters::class)
 abstract class ExerciseDatabase: RoomDatabase() {
 

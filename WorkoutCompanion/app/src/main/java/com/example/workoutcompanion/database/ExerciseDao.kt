@@ -11,12 +11,12 @@ import java.util.*
 @Dao
 interface ExerciseDao {
 
-    @Query("SELECT * FROM exercise")
+    @Query("SELECT * FROM ExerciseEntity")
     fun getExercises(): LiveData<List<Exercise>>
 
-    @Query("SELECT * FROM exercise WHERE id_exercise=(:id)")
+    @Query("SELECT * FROM ExerciseEntity WHERE id_exercise=(:id)")
     fun getExercise(id: UUID): LiveData<Exercise?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertExercise(exercise: Exercise)
+    fun insertExercise(exerciseEntity: ExerciseEntity)
 }
