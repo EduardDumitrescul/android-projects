@@ -29,7 +29,6 @@ class ExerciseRepository private constructor(context: Context) {
         executor.execute {
             exerciseDao.insertExercise(exercise)
         }
-
     }
 
     companion object {

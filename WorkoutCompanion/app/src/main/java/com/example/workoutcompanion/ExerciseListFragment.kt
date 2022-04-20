@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 private const val TAG = "ExerciseListFragment"
 
@@ -20,6 +21,7 @@ class ExerciseListFragment: Fragment() {
 
     interface Callbacks {
         fun onNewExercise()
+        fun onExerciseClicked(exercise_id: UUID)
     }
 
     private var callbacks: Callbacks? = null
@@ -81,7 +83,7 @@ class ExerciseListFragment: Fragment() {
         }
 
         override fun onClick(p0: View?) {
-
+            callbacks?.onExerciseClicked(exercise.id_exercise)
         }
 
     }
@@ -92,7 +94,7 @@ class ExerciseListFragment: Fragment() {
             viewLifecycleOwner,
             Observer { exercises->
                 exercises?.let {
-                    Log.d(TAG, "onViewCreated()")
+                    Log.d(TAG, "onViewCreated() ${exercises.size}")
                     updateUI(exercises)
                 }
             })

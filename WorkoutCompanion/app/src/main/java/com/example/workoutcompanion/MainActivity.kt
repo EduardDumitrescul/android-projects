@@ -30,4 +30,13 @@ class MainActivity : AppCompatActivity(), ExerciseListFragment.Callbacks {
             .addToBackStack(null)
             .commit()
     }
+
+    override fun onExerciseClicked(id_exercise: UUID) {
+        val fragment = ExerciseDetailFragment.newInstance(id_exercise)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
 }
