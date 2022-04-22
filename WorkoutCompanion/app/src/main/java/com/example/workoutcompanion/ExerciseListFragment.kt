@@ -82,7 +82,7 @@ class ExerciseListFragment: Fragment() {
         }
 
         override fun onClick(p0: View?) {
-            callbacks?.onExerciseClicked(exercise.id_exercise)
+            callbacks?.onExerciseClicked(exercise.exerciseId)
         }
 
     }

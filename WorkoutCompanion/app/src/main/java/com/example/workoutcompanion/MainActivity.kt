@@ -2,7 +2,6 @@ package com.example.workoutcompanion
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import java.util.*
 
 class MainActivity : AppCompatActivity(), ExerciseListFragment.Callbacks {
@@ -23,7 +22,7 @@ class MainActivity : AppCompatActivity(), ExerciseListFragment.Callbacks {
 
     override fun onNewExercise() {
         var exercise = Exercise()
-        val fragment = ExerciseDetailFragment.newInstance(exercise.id_exercise)
+        val fragment = ExerciseDetailFragment.newInstance(exercise.exerciseId)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)

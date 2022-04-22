@@ -15,14 +15,4 @@ class ExerciseTypeConverters {
     fun toUUID(uuid: String?): UUID? {
         return UUID.fromString(uuid)
     }
-
-    @TypeConverter
-    fun fromExercise(exercise: ExerciseEntity): ExerciseEntity {
-        return ExerciseEntity(exercise.id_exercise, exercise.name, exercise.equipment)
-    }
-
-    @TypeConverter
-    fun toExercise(exerciseEntity: ExerciseEntity): Exercise {
-        return Exercise.newInstance(exerciseEntity.id_exercise, exerciseEntity.name, exerciseEntity.equipment)
-    }
 }

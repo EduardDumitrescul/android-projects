@@ -3,10 +3,9 @@ package com.example.workoutcompanion
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.room.Room
 import com.example.workoutcompanion.database.ExerciseDatabase
-import com.example.workoutcompanion.database.ExerciseEntity
 import java.lang.IllegalStateException
 import java.util.*
 import java.util.concurrent.Executors
@@ -25,15 +24,48 @@ class ExerciseRepository private constructor(context: Context) {
     private val exerciseDao = database.exerciseDao()
     private val executor = Executors.newSingleThreadExecutor()
 
-    fun getExercises(): LiveData<List<Exercise>> = exerciseDao.getExercises()
+    fun getExercises(): LiveData<List<Exercise>> {
+        val entities = exerciseDao.getExercises()
+        return Transformations.map(entities) { entityList ->
+            entityList.map {
+                (ExerciseEntity.toExercise(it) as Exercise).apply {
+                    this.primaryMuscle = getMuscle(it.primaryMuscleId).value!!
+                }
+            }
+        }
+    }
 
-    fun getExercise(id: UUID): LiveData<Exercise?> = exerciseDao.getExercise(id)
+    fun getExercise(id: UUID): LiveData<Exercise?> {
+        return Transformations.map(exerciseDao.getExercise(id)) {entity ->
+            ExerciseEntity.toExercise(entity)
+        }
+    }
+
     fun saveExercise(exercise: Exercise) {
         Log.d(TAG, "saveExercise()")
         val exerciseEntity = ExerciseEntity.fromExercise(exercise)
         executor.execute {
             exerciseDao.insertExercise(exerciseEntity)
         }
+    }
+
+    fun getMuscles(): LiveData<List<Muscle>> {
+        val entities = exerciseDao.getMuscles()
+        return Transformations.map(entities) {  entityList ->
+            entityList.map{
+                MuscleEntity.toMuscle(it) as Muscle
+            }
+        }
+    }
+
+    fun getMuscle(id: UUID): LiveData<Muscle?> {
+        return Transformations.map(exerciseDao.getMuscle(id)) {
+            it.let {MuscleEntity.toMuscle(it)}
+        }
+    }
+
+    fun saveMuscle(muscle: Muscle) {
+        exerciseDao.insertMuscle(MuscleEntity.fromMuscle(muscle))
     }
 
     companion object {
