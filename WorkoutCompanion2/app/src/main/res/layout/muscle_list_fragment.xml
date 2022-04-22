@@ -4,7 +4,7 @@
     android:id="@+id/muscle_list_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MuscleListFragment">
+    tools:context=".muscle.MuscleListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/muscle_recycler_view"

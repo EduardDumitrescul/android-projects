@@ -1,14 +1,17 @@
-package com.example.workoutcompanion2
+package com.example.workoutcompanion2.exercise
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.workoutcompanion2.R
 
 class ExerciseListFragment : Fragment() {
 
@@ -59,16 +62,24 @@ class ExerciseListFragment : Fragment() {
         override fun getItemCount() = exerciseList.size
     }
 
-    private class ExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private class ExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         private lateinit var exercise: Exercise
         private val nameField: TextView = itemView.findViewById(R.id.name_field)
         private val infoField: TextView = itemView.findViewById(R.id.info_field)
 
+        init {
+            itemView.setOnClickListener(this)
+        }
+
         fun bind(exercise: Exercise) {
             this.exercise = exercise
             nameField.text = exercise.name
             infoField.text = exercise.info
+        }
+
+        override fun onClick(view: View) {
+            Navigation.findNavController(view).navigate(R.id.action_exercise_list_fragment_to_exerciseDetailFragment)
         }
     }
 

@@ -7,12 +7,21 @@
 
     <fragment
         android:id="@+id/exercise_list_fragment"
-        android:name="com.example.workoutcompanion2.ExerciseListFragment"
+        android:name="com.example.workoutcompanion2.exercise.ExerciseListFragment"
         android:label="exercise_list_fragment"
-        tools:layout="@layout/exercise_list_fragment" />
+        tools:layout="@layout/exercise_list_fragment" >
+        <action
+            android:id="@+id/action_exercise_list_fragment_to_exerciseDetailFragment"
+            app:destination="@id/exerciseDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/muscle_list_fragment"
-        android:name="com.example.workoutcompanion2.MuscleListFragment"
+        android:name="com.example.workoutcompanion2.muscle.MuscleListFragment"
         android:label="muscle_list_fragment"
         tools:layout="@layout/muscle_list_fragment" />
+    <fragment
+        android:id="@+id/exerciseDetailFragment"
+        android:name="com.example.workoutcompanion2.exercise.ExerciseDetailFragment"
+        android:label="fragment_exercise_detail"
+        tools:layout="@layout/exercise_detail_fragment" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.example.workoutcompanion2
+package com.example.workoutcompanion2.muscle
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.workoutcompanion2.R
 
 class MuscleListFragment : Fragment() {
 

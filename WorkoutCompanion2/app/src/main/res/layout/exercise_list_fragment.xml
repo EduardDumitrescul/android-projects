@@ -4,7 +4,7 @@
     android:id="@+id/exercise_list_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ExerciseListFragment">
+    tools:context=".exercise.ExerciseListFragment">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/exercise_recycle_view"
         android:layout_width="match_parent"

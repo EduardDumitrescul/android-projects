@@ -1,4 +1,4 @@
-package com.example.workoutcompanion2
+package com.example.workoutcompanion2.muscle
 
 import androidx.lifecycle.ViewModel
 
