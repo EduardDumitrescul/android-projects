@@ -7,23 +7,27 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.workoutcompanion2.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.handleCoroutineException
 
 class ExerciseListFragment : Fragment() {
 
     private var exerciseAdapter = ExerciseAdapter(emptyList())
     private lateinit var exerciseRecyclerView: RecyclerView
+    private lateinit var addButton: FloatingActionButton
+
     private val exerciseListViewModel: ExerciseListViewModel by lazy {
         ViewModelProvider(this)[ExerciseListViewModel::class.java]
     }
 
-    private lateinit var viewModel: ExerciseListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +38,11 @@ class ExerciseListFragment : Fragment() {
         exerciseRecyclerView  = view.findViewById(R.id.exercise_recycle_view) as RecyclerView
         exerciseRecyclerView.adapter = exerciseAdapter
         exerciseRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        addButton = view.findViewById(R.id.add_button)
+        addButton.setOnClickListener {
+            view.findNavController().navigate(R.id.action_exercise_list_fragment_to_exerciseDetailFragment)
+        }
 
         return view
     }
