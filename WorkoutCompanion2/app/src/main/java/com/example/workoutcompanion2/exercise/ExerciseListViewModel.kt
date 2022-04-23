@@ -1,13 +1,11 @@
 package com.example.workoutcompanion2.exercise
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
+import com.example.workoutcompanion2.database.AppRepository
 
 class ExerciseListViewModel : ViewModel() {
-    val exerciseList: MutableList<Exercise> = mutableListOf()
-
-    init {
-        for(i in 0 until 100)
-            exerciseList += Exercise.newInstance()
-    }
+    private val repository = AppRepository.get()
+    val exerciseListLiveData = repository.getExerciseList()
 
 }

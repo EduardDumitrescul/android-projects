@@ -8,10 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.workoutcompanion2.R
+import kotlinx.coroutines.handleCoroutineException
 
 class ExerciseListFragment : Fragment() {
 
@@ -38,11 +40,18 @@ class ExerciseListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateUI()
+        exerciseListViewModel.exerciseListLiveData.observe(
+            viewLifecycleOwner,
+            Observer { exerciseList ->
+                exerciseList?.let {
+                    updateUI(exerciseList)
+                }
+            }
+        )
     }
 
-    private fun updateUI() {
-        exerciseAdapter = ExerciseAdapter(exerciseListViewModel.exerciseList)
+    private fun updateUI(exerciseList: List<Exercise>) {
+        exerciseAdapter = ExerciseAdapter(exerciseList)
         exerciseRecyclerView.adapter = exerciseAdapter
     }
 
