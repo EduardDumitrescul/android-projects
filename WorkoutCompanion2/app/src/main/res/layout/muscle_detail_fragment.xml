@@ -31,7 +31,9 @@
             android:id="@+id/name_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="insert muscle name" />
+            android:hint="insert muscle name"
+            android:selectAllOnFocus="true"
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button

@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.workoutcompanion2.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 private const val TAG = "MuscleListFragment"
 
@@ -20,13 +22,10 @@ class MuscleListFragment : Fragment() {
 
     private var muscleAdapter: MuscleAdapter = MuscleAdapter(emptyList())
     private lateinit var muscleRecyclerView: RecyclerView
+    private lateinit var addButton: FloatingActionButton
 
     private val muscleListViewModel: MuscleListViewModel by lazy {
         ViewModelProvider(this)[MuscleListViewModel::class.java]
-    }
-
-    companion object {
-        fun newInstance() = MuscleListFragment()
     }
 
     override fun onCreateView(
@@ -38,18 +37,25 @@ class MuscleListFragment : Fragment() {
         muscleRecyclerView = view.findViewById(R.id.muscle_recycler_view)
         muscleRecyclerView.adapter = muscleAdapter
         muscleRecyclerView.layoutManager = LinearLayoutManager(context)
-
+        addButton = view.findViewById(R.id.add_button)
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateUI()
+        muscleListViewModel.muscleListLiveData.observe(viewLifecycleOwner) { muscleList ->
+            updateUI(muscleList)
+        }
+        addButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putSerializable(MuscleDetailFragment.ARG_MUSCLE_ID, muscleListViewModel.newMuscle())
+            findNavController().navigate(R.id.action_muscle_list_fragment_to_muscleDetailFragment, bundle)
+        }
     }
 
-    private fun updateUI() {
-        muscleAdapter = MuscleAdapter(muscleListViewModel.muscleList)
+    private fun updateUI(muscleList: List<Muscle>) {
+        muscleAdapter = MuscleAdapter(muscleList)
         muscleRecyclerView.adapter = muscleAdapter
     }
 
@@ -67,7 +73,9 @@ class MuscleListFragment : Fragment() {
         }
 
         override fun onClick(p0: View?) {
-            findNavController().navigate(R.id.action_muscle_list_fragment_to_muscleDetailFragment)
+            val bundle = Bundle()
+            bundle.putSerializable(MuscleDetailFragment.ARG_MUSCLE_ID, muscle.id)
+            findNavController().navigate(R.id.action_muscle_list_fragment_to_muscleDetailFragment, bundle)
         }
     }
 
@@ -83,6 +91,10 @@ class MuscleListFragment : Fragment() {
         }
 
         override fun getItemCount() = muscleList.size
+    }
+
+    companion object {
+        fun newInstance() = MuscleListFragment()
     }
 
 }

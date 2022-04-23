@@ -6,6 +6,8 @@ import androidx.lifecycle.Transformations
 import androidx.room.Room
 import com.example.workoutcompanion2.exercise.Exercise
 import com.example.workoutcompanion2.exercise.ExerciseEntity
+import com.example.workoutcompanion2.muscle.Muscle
+import com.example.workoutcompanion2.muscle.MuscleEntity
 import java.lang.IllegalStateException
 import java.util.*
 import java.util.concurrent.Executors
@@ -54,6 +56,36 @@ class AppRepository private constructor(context: Context) {
     }
 
     fun deleteExerciseById(id: UUID) {
+        appDao.deleteExerciseById(id)
+    }
+
+    fun getMuscleList(): LiveData<List<Muscle>> {
+        return Transformations.map(appDao.getMuscles()) { muscleList ->
+            muscleList.map { entity ->
+                MuscleEntity.toMuscle(entity)
+            }
+        }
+    }
+
+    fun getMuscle(id: UUID): LiveData<Muscle> {
+        return Transformations.map(appDao.getMuscle(id)) { entity ->
+            MuscleEntity.toMuscle(entity)
+        }
+    }
+
+    fun insertMuscle(muscle: Muscle) {
+        executor.execute {
+            appDao.insertMuscle(MuscleEntity.fromMuscle(muscle))
+        }
+    }
+
+    fun updateMuscle(muscle: Muscle) {
+        executor.execute {
+            appDao.updateMuscle(MuscleEntity.fromMuscle(muscle))
+        }
+    }
+
+    fun deleteMuscleById(id: UUID) {
         appDao.deleteExerciseById(id)
     }
 

@@ -1,12 +1,16 @@
 package com.example.workoutcompanion2.muscle
 
 import androidx.lifecycle.ViewModel
+import com.example.workoutcompanion2.database.AppRepository
+import java.util.*
 
 class MuscleListViewModel : ViewModel() {
-    val muscleList: MutableList<Muscle> = mutableListOf()
+    private val repository = AppRepository.get()
+    val muscleListLiveData = repository.getMuscleList()
 
-    init {
-        for(i in 0 until 100)
-            muscleList += Muscle.newInstance()
+    fun newMuscle(): UUID {
+        val muscle = Muscle.newInstance()
+        repository.insertMuscle(muscle)
+        return muscle.id
     }
 }
