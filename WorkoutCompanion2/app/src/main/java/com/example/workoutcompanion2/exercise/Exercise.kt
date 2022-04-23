@@ -7,8 +7,8 @@ import kotlin.random.Random
 
 class Exercise {
     var id: UUID = UUID.randomUUID()
-    var name: String = "name "
-    var info: String = "info "
+    var name: String = "Exercise Name "
+    var info: String = "Exercise Info "
 
     companion object {
         fun newInstance(): Exercise = Exercise()

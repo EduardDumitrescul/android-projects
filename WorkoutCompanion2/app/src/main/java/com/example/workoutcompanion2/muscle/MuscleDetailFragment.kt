@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -20,12 +21,14 @@ import java.util.*
 
 class MuscleDetailFragment : Fragment() {
 
-    private var muscle: Muscle = Muscle.newInstance()
     private val muscleDetailViewModel: MuscleDetailViewModel by lazy {
         ViewModelProvider(this)[MuscleDetailViewModel::class.java]
     }
+    private var muscle: Muscle = Muscle.newInstance()
     private lateinit var nameField: EditText
     private lateinit var saveButton: Button
+    private lateinit var deleteButton: Button
+
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +45,7 @@ class MuscleDetailFragment : Fragment() {
         val view = inflater.inflate(R.layout.muscle_detail_fragment, container, false)
         nameField = view.findViewById(R.id.name_field)
         saveButton = view.findViewById(R.id.save_button)
+        deleteButton = view.findViewById(R.id.delete_button)
         return view
     }
 
@@ -68,7 +72,10 @@ class MuscleDetailFragment : Fragment() {
                 muscle = it
                 updateUI()
             }
-
+        }
+        deleteButton.setOnClickListener {
+            muscleDetailViewModel.deleteMuscle(muscle)
+            navController.navigateUp()
         }
     }
 

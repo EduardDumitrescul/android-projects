@@ -24,6 +24,7 @@ class ExerciseDetailFragment : Fragment() {
     private var exercise = Exercise.newInstance()
     private lateinit var nameField: EditText
     private lateinit var saveButton: Button
+    private lateinit var deleteButton: Button
 
     private val exerciseDetailViewModel: ExerciseDetailViewModel by lazy {
         ViewModelProvider(this)[ExerciseDetailViewModel::class.java]
@@ -44,6 +45,7 @@ class ExerciseDetailFragment : Fragment() {
         val view = inflater.inflate(R.layout.exercise_detail_fragment, container, false)
         nameField = view.findViewById(R.id.name_field)
         saveButton = view.findViewById(R.id.save_button)
+        deleteButton = view.findViewById(R.id.delete_button)
 
         return view
     }
@@ -66,6 +68,10 @@ class ExerciseDetailFragment : Fragment() {
 
         saveButton.setOnClickListener {
             exerciseDetailViewModel.saveExercise(exercise)
+            navController.navigateUp()
+        }
+        deleteButton.setOnClickListener {
+            exerciseDetailViewModel.deleteExercise(exercise)
             navController.navigateUp()
         }
 

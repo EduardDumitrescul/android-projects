@@ -7,7 +7,7 @@ import kotlin.random.Random
 
 class Muscle {
     var id: UUID = UUID.randomUUID()
-    var name: String = "name"
+    var name: String = "Muscle Name"
 
     companion object {
         fun newInstance(): Muscle = Muscle()

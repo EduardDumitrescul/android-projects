@@ -56,7 +56,9 @@ class AppRepository private constructor(context: Context) {
     }
 
     fun deleteExerciseById(id: UUID) {
-        appDao.deleteExerciseById(id)
+        executor.execute {
+            appDao.deleteExerciseById(id)
+        }
     }
 
     fun getMuscleList(): LiveData<List<Muscle>> {
@@ -86,7 +88,9 @@ class AppRepository private constructor(context: Context) {
     }
 
     fun deleteMuscleById(id: UUID) {
-        appDao.deleteExerciseById(id)
+        executor.execute {
+            appDao.deleteMuscleById(id)
+        }
     }
 
     companion object {

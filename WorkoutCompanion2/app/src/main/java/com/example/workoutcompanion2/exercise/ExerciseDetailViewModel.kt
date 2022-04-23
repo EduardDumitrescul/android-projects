@@ -25,8 +25,8 @@ class ExerciseDetailViewModel: ViewModel() {
         repository.updateExercise(exercise)
     }
 
-    fun deleteExercise() {
-        exerciseIdLiveData.value?.let { repository.deleteExerciseById(it) }
+    fun deleteExercise(exercise: Exercise) {
+        repository.deleteExerciseById(exercise.id)
     }
 
 }
