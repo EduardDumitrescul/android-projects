@@ -41,10 +41,19 @@ class ExerciseListFragment : Fragment() {
 
         addButton = view.findViewById(R.id.add_button)
         addButton.setOnClickListener {
-            view.findNavController().navigate(R.id.action_exercise_list_fragment_to_exerciseDetailFragment)
+            val bundle: Bundle = Bundle()
+            bundle.putSerializable(ExerciseDetailFragment.ARG_EXERCISE_ID, exerciseListViewModel.newExercise())
+            view.findNavController().navigate(R.id.action_exercise_list_fragment_to_exerciseDetailFragment, bundle)
         }
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        exerciseListViewModel.exerciseListLiveData.value?.let {
+           // updateUI(it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,7 +106,9 @@ class ExerciseListFragment : Fragment() {
         }
 
         override fun onClick(view: View) {
-            Navigation.findNavController(view).navigate(R.id.action_exercise_list_fragment_to_exerciseDetailFragment)
+            val bundle = Bundle()
+            bundle.putSerializable(ExerciseDetailFragment.ARG_EXERCISE_ID, exercise.id)
+            Navigation.findNavController(view).navigate(R.id.action_exercise_list_fragment_to_exerciseDetailFragment, bundle)
         }
     }
 

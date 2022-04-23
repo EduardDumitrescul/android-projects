@@ -1,9 +1,7 @@
 package com.example.workoutcompanion2.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.example.workoutcompanion2.exercise.ExerciseEntity
 import java.util.*
 
@@ -17,4 +15,13 @@ interface AppDao {
 
     @Insert
     fun insertExercise(entity: ExerciseEntity)
+
+    @Update
+    fun updateExercise(entity: ExerciseEntity)
+
+    @Delete
+    fun deleteExercise(entity: ExerciseEntity)
+
+    @Query("DELETE FROM exercises WHERE exerciseId=(:id)")
+    fun deleteExerciseById(id: UUID)
 }

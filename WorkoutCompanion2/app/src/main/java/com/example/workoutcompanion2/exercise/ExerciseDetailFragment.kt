@@ -1,36 +1,39 @@
 package com.example.workoutcompanion2.exercise
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import androidx.navigation.Navigation
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import com.example.workoutcompanion2.R
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TAG = "ExerciseDetailFragment"
 
 class ExerciseDetailFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    private lateinit var exercise: Exercise
+    private lateinit var navController: NavController
+    private var exercise = Exercise.newInstance()
     private lateinit var nameField: EditText
     private lateinit var saveButton: Button
 
+    private val exerciseDetailViewModel: ExerciseDetailViewModel by lazy {
+        ViewModelProvider(this)[ExerciseDetailViewModel::class.java]
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        exercise = Exercise.newInstance()
 
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            exerciseDetailViewModel.loadExercise(it.getSerializable(ARG_EXERCISE_ID) as UUID)
         }
     }
 
@@ -41,33 +44,60 @@ class ExerciseDetailFragment : Fragment() {
         val view = inflater.inflate(R.layout.exercise_detail_fragment, container, false)
         nameField = view.findViewById(R.id.name_field)
         saveButton = view.findViewById(R.id.save_button)
-        saveButton.setOnClickListener {
-            Navigation.findNavController(view).navigateUp()
-        }
 
         return view
     }
 
+    override fun onStart() {
+        super.onStart()
+        nameField.setText(exercise.name)
+        nameField.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                exercise.name = p0.toString()
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+        })
+
+        saveButton.setOnClickListener {
+            exerciseDetailViewModel.saveExercise(exercise)
+            navController.navigateUp()
+        }
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = view.findNavController()
+        exerciseDetailViewModel.exerciseLiveData.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { exercise ->
+                exercise.let {
+                    this.exercise = exercise
+                    updateUI()
+                }
+            }
+
+        )
+    }
+
+    private fun updateUI() {
+        nameField.setText(exercise.name)
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ExerciseDetailFragment.
-         */
-        // TODO: Rename and change types and number of parameters
+        const val ARG_EXERCISE_ID = "exercise-id"
+
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(exerciseId: UUID) =
             ExerciseDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putSerializable(ARG_EXERCISE_ID, exerciseId)
                 }
             }
     }

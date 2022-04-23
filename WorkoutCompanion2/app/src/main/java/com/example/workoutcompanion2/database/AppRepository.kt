@@ -8,6 +8,7 @@ import com.example.workoutcompanion2.exercise.Exercise
 import com.example.workoutcompanion2.exercise.ExerciseEntity
 import java.lang.IllegalStateException
 import java.util.*
+import java.util.concurrent.Executors
 
 private const val DATABASE_NAME = "workout-database"
 
@@ -17,6 +18,8 @@ class AppRepository private constructor(context: Context) {
         AppDatabase::class.java,
         DATABASE_NAME
     ).build()
+
+    private val executor = Executors.newSingleThreadExecutor()
 
     private val appDao = database.appDao()
 
@@ -32,6 +35,26 @@ class AppRepository private constructor(context: Context) {
         return Transformations.map(appDao.getExercise(id)) { entity ->
             ExerciseEntity.toExercise(entity)
         }
+    }
+
+    fun insertExercise(exercise: Exercise) {
+        executor.execute {
+            appDao.insertExercise(ExerciseEntity.fromExercise(exercise))
+        }
+    }
+
+    fun updateExercise(exercise: Exercise) {
+        executor.execute {
+            appDao.updateExercise(ExerciseEntity.fromExercise(exercise))
+        }
+    }
+    
+    fun deleteExercise(exercise: Exercise) {
+        appDao.deleteExercise(ExerciseEntity.fromExercise(exercise))
+    }
+
+    fun deleteExerciseById(id: UUID) {
+        appDao.deleteExerciseById(id)
     }
 
     companion object {
