@@ -18,10 +18,19 @@
         android:id="@+id/muscle_list_fragment"
         android:name="com.example.workoutcompanion2.muscle.MuscleListFragment"
         android:label="muscle_list_fragment"
-        tools:layout="@layout/muscle_list_fragment" />
+        tools:layout="@layout/muscle_list_fragment" >
+        <action
+            android:id="@+id/action_muscle_list_fragment_to_muscleDetailFragment"
+            app:destination="@id/muscleDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/exerciseDetailFragment"
         android:name="com.example.workoutcompanion2.exercise.ExerciseDetailFragment"
         android:label="fragment_exercise_detail"
         tools:layout="@layout/exercise_detail_fragment" />
+    <fragment
+        android:id="@+id/muscleDetailFragment"
+        android:name="com.example.workoutcompanion2.muscle.MuscleDetailFragment"
+        android:label="muscle_detail_fragment"
+        tools:layout="@layout/muscle_detail_fragment" />
 </navigation>

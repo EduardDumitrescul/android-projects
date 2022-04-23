@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.workoutcompanion2.R
@@ -47,13 +48,21 @@ class MuscleListFragment : Fragment() {
         muscleRecyclerView.adapter = muscleAdapter
     }
 
-    private inner class MuscleHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private inner class MuscleHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private lateinit var muscle: Muscle
         private val nameField: TextView = itemView.findViewById(R.id.name_field)
+
+        init {
+            itemView.setOnClickListener(this)
+        }
 
         fun bind(muscle: Muscle) {
             this.muscle = muscle
             nameField.text = muscle.name
+        }
+
+        override fun onClick(p0: View?) {
+            findNavController().navigate(R.id.action_muscle_list_fragment_to_muscleDetailFragment)
         }
     }
 
