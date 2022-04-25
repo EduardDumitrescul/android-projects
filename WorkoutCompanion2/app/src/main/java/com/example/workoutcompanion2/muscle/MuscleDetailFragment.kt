@@ -34,7 +34,7 @@ class MuscleDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            muscleDetailViewModel.loadMuscle(it.getSerializable(MuscleDetailFragment.ARG_MUSCLE_ID) as UUID)
+            muscleDetailViewModel.loadMuscle(it.getSerializable(ARG_MUSCLE_ID) as UUID)
         }
     }
 

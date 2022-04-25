@@ -1,6 +1,6 @@
 package com.example.workoutcompanion2.exercise
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
@@ -9,9 +9,10 @@ import java.util.*
 
 private const val TAG = "ExerciseDetailViewModel"
 
-class ExerciseDetailViewModel: ViewModel() {
+class ExerciseDetailViewModel : ViewModel() {
     private val repository = AppRepository.get()
     private val exerciseIdLiveData = MutableLiveData<UUID>()
+    var muscleListLiveData = repository.getMuscleList()
 
     var exerciseLiveData = Transformations.switchMap(exerciseIdLiveData) { exerciseId ->
         repository.getExercise(exerciseId)

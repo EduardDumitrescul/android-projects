@@ -3,18 +3,22 @@ package com.example.workoutcompanion2.exercise
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
+import android.widget.*
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.workoutcompanion2.R
+import com.example.workoutcompanion2.muscle.Muscle
 import java.util.*
+import android.widget.ArrayAdapter as ArrayAdapter1
+import android.widget.SpinnerAdapter as WidgetSpinnerAdapter
 
 private const val TAG = "ExerciseDetailFragment"
 
@@ -25,6 +29,7 @@ class ExerciseDetailFragment : Fragment() {
     private lateinit var nameField: EditText
     private lateinit var saveButton: Button
     private lateinit var deleteButton: Button
+    private lateinit var primarySpinner: Spinner
 
     private val exerciseDetailViewModel: ExerciseDetailViewModel by lazy {
         ViewModelProvider(this)[ExerciseDetailViewModel::class.java]
@@ -32,7 +37,6 @@ class ExerciseDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.let {
             exerciseDetailViewModel.loadExercise(it.getSerializable(ARG_EXERCISE_ID) as UUID)
         }
@@ -46,6 +50,8 @@ class ExerciseDetailFragment : Fragment() {
         nameField = view.findViewById(R.id.name_field)
         saveButton = view.findViewById(R.id.save_button)
         deleteButton = view.findViewById(R.id.delete_button)
+        primarySpinner = view.findViewById(R.id.primary_muscle_spinner)
+
 
         return view
     }
@@ -74,22 +80,31 @@ class ExerciseDetailFragment : Fragment() {
             exerciseDetailViewModel.deleteExercise(exercise)
             navController.navigateUp()
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = view.findNavController()
         exerciseDetailViewModel.exerciseLiveData.observe(
-            viewLifecycleOwner,
-            androidx.lifecycle.Observer { exercise ->
-                exercise.let {
-                    this.exercise = exercise
-                    updateUI()
-                }
+            viewLifecycleOwner
+        ) { exercise ->
+            exercise.let {
+                this.exercise = exercise
+                updateUI()
             }
+        }
+        exerciseDetailViewModel.muscleListLiveData.observe(
+            viewLifecycleOwner
+        ) {
+            val muscleNameList: MutableList<String> = mutableListOf()
+            it.forEach { muscle ->
+                Log.d(TAG, "sdd string")
+                muscleNameList.add(muscle.name)
+            }
+            val adapter = android.widget.ArrayAdapter<String>(view.context, R.layout.muscle_list_item_spinner, R.id.muscle_list_item_spinner, muscleNameList)
+            primarySpinner.adapter = adapter
+        }
 
-        )
     }
 
     private fun updateUI() {

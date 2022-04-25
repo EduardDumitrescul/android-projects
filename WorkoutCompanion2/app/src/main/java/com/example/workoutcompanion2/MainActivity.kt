@@ -16,10 +16,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
-        var navController = findNavController(R.id.fragment_container)
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
+        val navController = findNavController(R.id.fragment_container)
         bottomNavigationView.setupWithNavController(navController)
-        navController.addOnDestinationChangedListener { _, destination, _, ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.exercise_list_fragment-> {
                     bottomNavigationView.visibility = View.VISIBLE

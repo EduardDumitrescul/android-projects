@@ -11,6 +11,11 @@ class Muscle {
 
     companion object {
         fun newInstance(): Muscle = Muscle()
+        fun newInstance(name: String): Muscle {
+            return Muscle().apply {
+                this.name = name
+            }
+        }
     }
 }
 

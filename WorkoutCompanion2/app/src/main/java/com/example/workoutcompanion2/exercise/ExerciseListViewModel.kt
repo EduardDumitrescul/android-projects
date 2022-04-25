@@ -1,6 +1,5 @@
 package com.example.workoutcompanion2.exercise
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import com.example.workoutcompanion2.database.AppRepository
 import java.util.*

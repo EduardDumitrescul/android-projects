@@ -1,9 +1,12 @@
 package com.example.workoutcompanion2.database
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.workoutcompanion2.exercise.Exercise
 import com.example.workoutcompanion2.exercise.ExerciseEntity
 import com.example.workoutcompanion2.muscle.Muscle
@@ -11,15 +14,26 @@ import com.example.workoutcompanion2.muscle.MuscleEntity
 import java.lang.IllegalStateException
 import java.util.*
 import java.util.concurrent.Executors
+import javax.security.auth.callback.Callback
 
+private const val TAG = "app-repository"
 private const val DATABASE_NAME = "workout-database"
+
+private val muscleList: List<String> = listOf("Chest", "Back", "Biceps", "Triceps", "Abdominals", "Shoulders", "Quadriceps", "Hamstrings", "Calves", "Glutes")
 
 class AppRepository private constructor(context: Context) {
     private val database: AppDatabase = Room.databaseBuilder(
         context.applicationContext,
         AppDatabase::class.java,
         DATABASE_NAME
-    ).build()
+    ).addCallback(object: RoomDatabase.Callback() {
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
+            muscleList.forEach { muscle ->
+                insertMuscle(Muscle.newInstance(muscle))
+            }
+        }
+    }).build()
 
     private val executor = Executors.newSingleThreadExecutor()
 

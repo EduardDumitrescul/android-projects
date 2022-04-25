@@ -3,7 +3,6 @@ package com.example.workoutcompanion2.exercise
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
-import kotlin.random.Random
 
 class Exercise {
     var id: UUID = UUID.randomUUID()
