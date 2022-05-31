@@ -2,7 +2,9 @@ package com.example.workoutcompanion2.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.example.workoutcompanion2.exercise.ExerciseWithMusclesEntity
 import com.example.workoutcompanion2.exercise.ExerciseEntity
+import com.example.workoutcompanion2.exercise.ExerciseMuscleCrossRef
 import com.example.workoutcompanion2.muscle.MuscleEntity
 import java.util.*
 
@@ -13,6 +15,14 @@ interface AppDao {
 
     @Query("SELECT * FROM exercises WHERE exerciseId=(:id)")
     fun getExercise(id: UUID): LiveData<ExerciseEntity>
+
+    @Transaction
+    @Query("SELECT * FROM exercises")
+    fun getExerciseListWithMuscles(): LiveData<List<ExerciseWithMusclesEntity>>
+
+    @Transaction
+    @Query("SELECT * FROM exercises WHERE exerciseId=(:id)")
+    fun getExerciseWithMuscles(id: UUID): LiveData<ExerciseWithMusclesEntity>
 
     @Insert
     fun insertExercise(entity: ExerciseEntity)
@@ -41,4 +51,7 @@ interface AppDao {
 
     @Query("DELETE FROM muscles WHERE muscleId=(:id)")
     fun deleteMuscleById(id: UUID)
+
+    @Insert
+    fun insertExerciseMuscleCrossRef(entity: ExerciseMuscleCrossRef)
 }

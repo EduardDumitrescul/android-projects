@@ -6,7 +6,7 @@ import java.util.*
 
 class ExerciseListViewModel : ViewModel() {
     private val repository = AppRepository.get()
-    val exerciseListLiveData = repository.getExerciseList()
+    val exerciseListLiveData = repository.getExerciseAndPrimaryMuscleList()
 
     fun newExercise(): UUID {
         val exercise = Exercise.newInstance()

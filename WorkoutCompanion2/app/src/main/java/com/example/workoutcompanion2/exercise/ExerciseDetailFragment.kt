@@ -9,27 +9,37 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.example.workoutcompanion2.R
 import com.example.workoutcompanion2.muscle.Muscle
 import java.util.*
-import android.widget.ArrayAdapter as ArrayAdapter1
-import android.widget.SpinnerAdapter as WidgetSpinnerAdapter
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.workoutcompanion2.muscle.PrimaryMuscleDialog
+import com.example.workoutcompanion2.muscle.SecondaryMuscleDialog
 
 private const val TAG = "ExerciseDetailFragment"
 
-class ExerciseDetailFragment : Fragment() {
+class ExerciseDetailFragment : Fragment(), PrimaryMuscleDialog.Callbacks, SecondaryMuscleDialog.Callbacks {
 
     private lateinit var navController: NavController
+
     private var exercise = Exercise.newInstance()
-    private lateinit var nameField: EditText
+    private lateinit var exerciseNameField: EditText
+
+    private var muscleList: MutableList<Muscle> = mutableListOf()
+    private lateinit var primaryMuscleArea: ConstraintLayout
+    private lateinit var primaryMuscleField: TextView
+    private lateinit var primaryMuscleDialog: PrimaryMuscleDialog
+
+    private lateinit var secondaryMuscleArea: ConstraintLayout
+    private lateinit var secondaryMuscleField: TextView
+    private lateinit var secondaryMuscleDialog: SecondaryMuscleDialog
+
+
     private lateinit var saveButton: Button
     private lateinit var deleteButton: Button
-    private lateinit var primarySpinner: Spinner
 
     private val exerciseDetailViewModel: ExerciseDetailViewModel by lazy {
         ViewModelProvider(this)[ExerciseDetailViewModel::class.java]
@@ -47,19 +57,22 @@ class ExerciseDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.exercise_detail_fragment, container, false)
-        nameField = view.findViewById(R.id.name_field)
+        exerciseNameField = view.findViewById(R.id.name_field)
         saveButton = view.findViewById(R.id.save_button)
         deleteButton = view.findViewById(R.id.delete_button)
-        primarySpinner = view.findViewById(R.id.primary_muscle_spinner)
-
-
+        primaryMuscleArea = view.findViewById(R.id.primary_muscle_area)
+        primaryMuscleField = view.findViewById(R.id.primary_muscle_field)
+        primaryMuscleDialog = PrimaryMuscleDialog()
+        secondaryMuscleArea = view.findViewById(R.id.secondary_muscle_area)
+        secondaryMuscleField = view.findViewById(R.id.secondary_muscle_field)
+        secondaryMuscleDialog = SecondaryMuscleDialog()
         return view
     }
 
     override fun onStart() {
         super.onStart()
-        nameField.setText(exercise.name)
-        nameField.addTextChangedListener(object: TextWatcher {
+        exerciseNameField.setText(exercise.name)
+        exerciseNameField.addTextChangedListener(object: TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
@@ -80,6 +93,14 @@ class ExerciseDetailFragment : Fragment() {
             exerciseDetailViewModel.deleteExercise(exercise)
             navController.navigateUp()
         }
+        primaryMuscleArea.setOnClickListener {
+            primaryMuscleDialog.setItemList(muscleList)
+            primaryMuscleDialog.show(childFragmentManager, TAG)
+        }
+        secondaryMuscleArea.setOnClickListener {
+            secondaryMuscleDialog.setItemList(muscleList, null)
+            secondaryMuscleDialog.show(childFragmentManager, TAG)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,20 +116,16 @@ class ExerciseDetailFragment : Fragment() {
         }
         exerciseDetailViewModel.muscleListLiveData.observe(
             viewLifecycleOwner
-        ) {
-            val muscleNameList: MutableList<String> = mutableListOf()
-            it.forEach { muscle ->
-                Log.d(TAG, "sdd string")
-                muscleNameList.add(muscle.name)
-            }
-            val adapter = android.widget.ArrayAdapter<String>(view.context, R.layout.muscle_list_item_spinner, R.id.muscle_list_item_spinner, muscleNameList)
-            primarySpinner.adapter = adapter
+        ) { muscleList ->
+            this.muscleList = muscleList as MutableList<Muscle>
         }
 
     }
 
     private fun updateUI() {
-        nameField.setText(exercise.name)
+        exerciseNameField.setText(exercise.name)
+        primaryMuscleField.text = exercise.primaryMuscle?.name ?: "Not Selected"
+        secondaryMuscleField.text = exercise.secondaryMuscles.toString()
     }
 
     companion object {
@@ -121,5 +138,16 @@ class ExerciseDetailFragment : Fragment() {
                     putSerializable(ARG_EXERCISE_ID, exerciseId)
                 }
             }
+    }
+
+    override fun itemClicked(muscle: Muscle) {
+        exercise.primaryMuscle = muscle
+        updateUI()
+    }
+
+    override fun listSelected(muscleList: List<Muscle>) {
+        Log.d(TAG, muscleList.toString())
+        exercise.secondaryMuscles = muscleList
+        updateUI()
     }
 }

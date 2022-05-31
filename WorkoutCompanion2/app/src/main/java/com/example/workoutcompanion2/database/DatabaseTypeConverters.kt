@@ -8,5 +8,9 @@ class DatabaseTypeConverters {
     fun fromUUID(id: UUID?): String? = id?.toString()
 
     @TypeConverter
-    fun toUUID(id: String?): UUID? = UUID.fromString(id)
+    fun toUUID(id: String?): UUID? {
+        if(id == null)
+            return null
+        return UUID.fromString(id)
+    }
 }

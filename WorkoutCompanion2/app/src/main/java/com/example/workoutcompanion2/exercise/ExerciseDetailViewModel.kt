@@ -1,5 +1,6 @@
 package com.example.workoutcompanion2.exercise
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -15,7 +16,7 @@ class ExerciseDetailViewModel : ViewModel() {
     var muscleListLiveData = repository.getMuscleList()
 
     var exerciseLiveData = Transformations.switchMap(exerciseIdLiveData) { exerciseId ->
-        repository.getExercise(exerciseId)
+        repository.getExerciseAndPrimaryMuscle(exerciseId)
     }
 
     fun loadExercise(id: UUID) {
@@ -23,6 +24,8 @@ class ExerciseDetailViewModel : ViewModel() {
     }
 
     fun saveExercise(exercise: Exercise) {
+        exercise.primaryMuscle?.name?.let { Log.d(TAG, it) }
+        exercise.primaryMuscle?.id?.let { Log.d(TAG, it.toString()) }
         repository.updateExercise(exercise)
     }
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_navigation"
+    app:startDestination="@id/gameFragment">
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.example.programmertyccon.GameFragment"
+        android:label="coding_area_fragment"
+        tools:layout="@layout/game_fragment" />
+</navigation>

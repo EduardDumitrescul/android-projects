@@ -8,13 +8,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.workoutcompanion2.exercise.Exercise
+import com.example.workoutcompanion2.exercise.ExerciseWithMusclesEntity
 import com.example.workoutcompanion2.exercise.ExerciseEntity
+import com.example.workoutcompanion2.exercise.ExerciseMuscleCrossRef
 import com.example.workoutcompanion2.muscle.Muscle
 import com.example.workoutcompanion2.muscle.MuscleEntity
 import java.lang.IllegalStateException
 import java.util.*
 import java.util.concurrent.Executors
-import javax.security.auth.callback.Callback
 
 private const val TAG = "app-repository"
 private const val DATABASE_NAME = "workout-database"
@@ -62,6 +63,10 @@ class AppRepository private constructor(context: Context) {
     fun updateExercise(exercise: Exercise) {
         executor.execute {
             appDao.updateExercise(ExerciseEntity.fromExercise(exercise))
+            exercise.secondaryMuscles.forEach { muscle ->
+                val entity = ExerciseMuscleCrossRef(exercise.id, muscle.id)
+                appDao.insertExerciseMuscleCrossRef(entity)
+            }
         }
     }
     
@@ -74,6 +79,25 @@ class AppRepository private constructor(context: Context) {
             appDao.deleteExerciseById(id)
         }
     }
+
+    fun getExerciseAndPrimaryMuscleList(): LiveData<List<Exercise>> {
+        Log.d(TAG, "getExerciseAndPrimaryMuscleList()")
+        return Transformations.map(appDao.getExerciseListWithMuscles()) { list ->
+            list.map { entity ->
+                ExerciseWithMusclesEntity.toExercise(entity)
+            }
+        }
+    }
+
+    fun getExerciseAndPrimaryMuscle(id: UUID): LiveData<Exercise> {
+        Log.d(TAG, "getExerciseAndPrimaryMuscle()")
+        return Transformations.map(appDao.getExerciseWithMuscles(id)) { entity ->
+            entity.primaryMuscleEntity?.let { Log.d(TAG, it.muscleName) }
+            ExerciseWithMusclesEntity.toExercise(entity)
+        }
+    }
+
+
 
     fun getMuscleList(): LiveData<List<Muscle>> {
         return Transformations.map(appDao.getMuscles()) { muscleList ->
