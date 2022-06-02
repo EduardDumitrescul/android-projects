@@ -1,5 +1,6 @@
 package com.example.programmertyccon
 
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -11,7 +12,12 @@ import com.example.programmertyccon.Upgrades.*
 
 private val TAG = "UpgradesPanel"
 
-class UpgradesPanel(private val parent: Fragment, private val view: View){
+class UpgradesPanel(
+    private val parent: Fragment,
+    private val view: View
+): Observer{
+
+    private val player = Player.getInstance()
     private var container: ConstraintLayout = view.findViewById(R.id.upgrades_panel)
 
     private var callbacks: Callbacks = parent as Callbacks
@@ -33,6 +39,7 @@ class UpgradesPanel(private val parent: Fragment, private val view: View){
     private var fraction = 0.8f
 
     init {
+        player.addObserver(this)
         recyclerView.layoutManager = LinearLayoutManager(view.context)
         onClick()
     }
@@ -98,10 +105,19 @@ class UpgradesPanel(private val parent: Fragment, private val view: View){
     }
 
     fun updateUI() {
-        if(skillUpgradesSelected) recyclerView.adapter = SkillListAdapter(Player.getInstance().skillUpgradesList)
-        else if(assistantUpgradesSelected) recyclerView.adapter = AssistantListAdapter(Player.getInstance().assistantUpgradeList)
-        else if(equipmentUpgradesSelected) recyclerView.adapter = EquipmentListAdapter(Player.getInstance().equipmentUpgradeList)
-        else recyclerView.adapter = null
+        Log.d(TAG, "updateUI()")
+        if(skillUpgradesSelected) {
+            recyclerView.adapter = SkillListAdapter(player.skillUpgradesList)
+        }
+        else if(assistantUpgradesSelected) {
+            recyclerView.adapter = AssistantListAdapter(player.assistantUpgradeList)
+        }
+        else if(equipmentUpgradesSelected) {
+            recyclerView.adapter = EquipmentListAdapter(player.equipmentUpgradeList)
+        }
+        else {
+            recyclerView.adapter = null
+        }
     }
 
     fun extend() {
@@ -122,6 +138,10 @@ class UpgradesPanel(private val parent: Fragment, private val view: View){
     interface Callbacks {
         fun expandUpgradesPanel()
         fun collapseUpgradesPanel()
+    }
+
+    override fun update() {
+        updateUI()
     }
 
 }

@@ -37,7 +37,7 @@ class Player private constructor(): Subject{
 
     var lastActiveTime: Long = 0
 
-    var currentMoney: Double = 0.0
+    var currentMoney: Double = 100000000.0
     var tokenValue: Double = 1.0
     // The speed at which are added the tokens (token / second)
     var tokenSpawnRate: Double = 10.0

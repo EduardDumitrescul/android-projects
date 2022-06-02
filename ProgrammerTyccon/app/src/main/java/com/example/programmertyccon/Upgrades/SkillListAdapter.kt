@@ -1,10 +1,13 @@
 package com.example.programmertyccon.Upgrades
 
+import android.app.SearchManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.programmertyccon.Player
 import com.example.programmertyccon.R
@@ -36,7 +39,7 @@ class SkillViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.O
     private val effectField: TextView = itemView.findViewById(R.id.effect_textfield)
 
     init {
-
+        itemView.setOnClickListener(this)
     }
 
     fun bind(upgrade: SkillUpgrade) {
@@ -48,6 +51,14 @@ class SkillViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.O
     }
 
     override fun onClick(v: View?) {
-
+        if(player.currentMoney < skillUpgrade.price) {
+            Log.d(TAG, "onClick()")
+            if (v != null) {
+                Toast.makeText(v.context, "not enough money!", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else {
+            player.upgradeSkill(skillUpgrade.index)
+        }
     }
 }
