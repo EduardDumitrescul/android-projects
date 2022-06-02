@@ -55,7 +55,7 @@ class GameFragment() : Fragment(), UpgradesPanel.Callbacks {
         Log.d(TAG, "onCreateView()")
         val view = inflater.inflate(R.layout.game_fragment, container, false)
         constraintLayout = view.findViewById(R.id.constraintLayout)
-        playableArea = PlayableArea(this, requireActivity(), view)
+        playableArea = PlayableArea(this, view)
         upgradesPanel = UpgradesPanel(this, view)
         infoPanel = InfoPanel(requireActivity(), view)
 
@@ -70,13 +70,7 @@ class GameFragment() : Fragment(), UpgradesPanel.Callbacks {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.player.observe(viewLifecycleOwner) { player ->
-            player.let {
-                Log.d(TAG, "onViewCreated() viewMode.player.observe")
-                this.player = player
-                updateUI()
-            }
-        }
+        player.notifyObservers()
     }
 
     private fun updateUI() {

@@ -80,7 +80,7 @@ class PlayableArea(
     // Player has clicked a token
     fun tokenClicked(token: ClickableToken) {
         tokenSet.remove(token)
-        activity.runOnUiThread {
+        parent.requireActivity().runOnUiThread {
             container.removeView(token) // The token is removes from the container
         }
 

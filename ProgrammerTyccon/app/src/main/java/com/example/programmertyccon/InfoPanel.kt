@@ -9,10 +9,14 @@ import java.util.*
 class InfoPanel(
     private val activity: Activity,
     private val view: View
-) {
+): Observer {
+    init {
+        Player.getInstance().addObserver(this)
+    }
+
     private val player = Player.getInstance()
 
-    private val totalAmountField: TextView = view.findViewById(R.id.money_textview)
+    private val totalAmountField: TextView = view.findViewById<TextView?>(R.id.money_textview)
     private val incomeSpeedField: TextView = view.findViewById(R.id.money_speed_textview)
     private val multiplierField: TextView = view.findViewById(R.id.multiplier)
     private val spawnRateField: TextView = view.findViewById(R.id.spawn_rate_textview)
@@ -40,6 +44,10 @@ class InfoPanel(
         spawnRateField.text = "${player.tokenSpawnRate} tokens / second"
         autoRateField.text = "${player.assistantRate * player.tokenValue} money / second"
         multiplierField.text = "x${player.multiplier}"
+    }
+
+    override fun update() {
+        updateUI()
     }
 
 }

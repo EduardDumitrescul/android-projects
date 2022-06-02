@@ -16,7 +16,7 @@ private val TAG = "Player"
 
 //Singleton Class that holds the information about the current player
 
-class Player private constructor(){
+class Player private constructor(): Subject{
     companion object {
         private var INSTANCE: Player? = null
 
@@ -31,13 +31,6 @@ class Player private constructor(){
         fun getInstance(): Player {
             return INSTANCE ?:
             throw IllegalStateException("Player() has not been initialized")
-        }
-
-        fun getLiveData(): LiveData<Player> {
-            if(INSTANCE == null)
-                throw IllegalStateException("Player() has not been initialized")
-            return MutableLiveData<Player>().apply { value = INSTANCE }
-
         }
     }
 
@@ -89,10 +82,17 @@ class Player private constructor(){
         string = FileReaderUtil.readFileAsString("assistant-test.txt")
         assistantUpgradeList =
             Gson().fromJson(string, object : TypeToken<List<AssistantUpgrade>>() {}.type)
+
     }
 
     fun upgradeSkill(index: Int) {
+        skillUpgradesList[index].apply {
+            level ++
+            price = (price * 1.2).toInt()
+        }
+        tokenValue += skillUpgradesList[index].effect
 
+        notifyObservers()
     }
 
     fun tokenClicked() {
@@ -102,5 +102,23 @@ class Player private constructor(){
         incomeSpeed += amount
         currentMoney += amount
         Log.d(TAG, "tokenClicked()")
+
+        notifyObservers()
+    }
+
+    private val observers: MutableSet<Observer> = mutableSetOf()
+
+    override fun addObserver(observer: Observer) {
+        observers.add(observer)
+    }
+
+    override fun removeObserver(observer: Observer) {
+        observers.remove(observer)
+    }
+
+    override fun notifyObservers() {
+        observers.forEach {
+            it.update()
+        }
     }
 }
