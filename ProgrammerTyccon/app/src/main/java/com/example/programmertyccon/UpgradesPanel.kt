@@ -1,14 +1,9 @@
 package com.example.programmertyccon
 
-import android.animation.ObjectAnimator
-import android.transition.TransitionManager
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,12 +46,12 @@ class UpgradesPanel(private val parent: Fragment, private val view: View){
             }
             else {
                 callbacks.expandUpgradesPanel()
-                recyclerView.adapter = SkillListAdapter(Player.getInstance().skillUpgradeList)
                 skillUpgradesSelected = true
                 equipmentUpgradesSelected = false
                 assistantUpgradesSelected = false
                 settingsSelected = false
             }
+            updateUI()
         }
         equipmentButton.setOnClickListener {
             if(equipmentUpgradesSelected) {
@@ -65,12 +60,12 @@ class UpgradesPanel(private val parent: Fragment, private val view: View){
             }
             else {
                 callbacks.expandUpgradesPanel()
-                recyclerView.adapter = EquipmentListAdapter(Player.getInstance().equipmentUpgradeList)
                 skillUpgradesSelected = false
                 equipmentUpgradesSelected = true
                 assistantUpgradesSelected = false
                 settingsSelected = false
             }
+            updateUI()
         }
         assistantButton.setOnClickListener {
             if(assistantUpgradesSelected) {
@@ -79,13 +74,12 @@ class UpgradesPanel(private val parent: Fragment, private val view: View){
             }
             else {
                 callbacks.expandUpgradesPanel()
-                recyclerView.adapter = AssistantListAdapter(Player.getInstance().assistantUpgradeList)
                 skillUpgradesSelected = false
                 equipmentUpgradesSelected = false
                 assistantUpgradesSelected = true
                 settingsSelected = false
             }
-
+            updateUI()
         }
         settingsButton.setOnClickListener {
             if(settingsSelected) {
@@ -99,8 +93,15 @@ class UpgradesPanel(private val parent: Fragment, private val view: View){
                 assistantUpgradesSelected = false
                 settingsSelected = true
             }
-
+            updateUI()
         }
+    }
+
+    fun updateUI() {
+        if(skillUpgradesSelected) recyclerView.adapter = SkillListAdapter(Player.getInstance().skillUpgradesList)
+        else if(assistantUpgradesSelected) recyclerView.adapter = AssistantListAdapter(Player.getInstance().assistantUpgradeList)
+        else if(equipmentUpgradesSelected) recyclerView.adapter = EquipmentListAdapter(Player.getInstance().equipmentUpgradeList)
+        else recyclerView.adapter = null
     }
 
     fun extend() {
@@ -116,8 +117,6 @@ class UpgradesPanel(private val parent: Fragment, private val view: View){
     }
 
     fun isExtended(): Boolean = isExtended
-
-    public fun getTopContainerHeight(): Int = topContainer.height
 
 
     interface Callbacks {

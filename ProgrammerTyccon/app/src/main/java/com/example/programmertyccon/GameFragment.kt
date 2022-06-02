@@ -1,35 +1,16 @@
 package com.example.programmertyccon
 
-import android.animation.ObjectAnimator
-import android.app.Activity
-import android.content.Context
-import android.graphics.BitmapFactory
-import android.icu.text.IDNA
 import android.os.Bundle
 import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.RelativeLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.tabs.TabLayout
-import java.util.*
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 private const val TAG = "GameFragment"
 
@@ -51,9 +32,13 @@ class GameFragment() : Fragment(), UpgradesPanel.Callbacks {
     companion object {
         fun newInstance() = GameFragment()
     }
+    private val viewModel: GameViewModel by lazy {
+        ViewModelProvider(this)[GameViewModel::class.java]
+    }
+    private var player = Player.getInstance()
 
     private lateinit var constraintLayout: ConstraintLayout
-    private lateinit var viewModel: GameViewModel
+
     private lateinit var playableArea: PlayableArea
     private lateinit var upgradesPanel: UpgradesPanel
     private lateinit var infoPanel: InfoPanel
@@ -70,7 +55,7 @@ class GameFragment() : Fragment(), UpgradesPanel.Callbacks {
         Log.d(TAG, "onCreateView()")
         val view = inflater.inflate(R.layout.game_fragment, container, false)
         constraintLayout = view.findViewById(R.id.constraintLayout)
-        playableArea = PlayableArea(requireActivity(), view)
+        playableArea = PlayableArea(this, requireActivity(), view)
         upgradesPanel = UpgradesPanel(this, view)
         infoPanel = InfoPanel(requireActivity(), view)
 
@@ -83,12 +68,20 @@ class GameFragment() : Fragment(), UpgradesPanel.Callbacks {
         playableArea.stop()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this)[GameViewModel::class.java]
-        // TODO: Use the ViewModel
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.player.observe(viewLifecycleOwner) { player ->
+            player.let {
+                Log.d(TAG, "onViewCreated() viewMode.player.observe")
+                this.player = player
+                updateUI()
+            }
+        }
+    }
 
-
+    private fun updateUI() {
+        upgradesPanel.updateUI()
+        infoPanel.updateUI()
     }
 
     override fun expandUpgradesPanel() {
@@ -128,4 +121,3 @@ class GameFragment() : Fragment(), UpgradesPanel.Callbacks {
         Log.d(TAG, "onViewCreated() " + view?.measuredWidth .toString())
     }
 }
-

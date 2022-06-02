@@ -4,10 +4,11 @@ import android.app.Activity
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.fragment.app.Fragment
 import java.util.*
 
 class PlayableArea(
-    val activity: Activity,
+    val parent: Fragment,
     val view: View
 ) {
     private val player: Player = Player.getInstance()
@@ -17,6 +18,7 @@ class PlayableArea(
     //The timer that updates the scrolling view and adds tokens
     private var backgroundTimer: Timer = Timer()
     //Scroll speed of the background (lines / second)
+
     private var scrollSpeed: Double = 5.0
     //The height that is needed to scroll one line (pixels / line)
     private var scrollHeight: Int = 100
@@ -49,7 +51,7 @@ class PlayableArea(
     // TimerTask that creates and adds the Tokens
     private fun createToken(): TimerTask = object : TimerTask() {
         override fun run() {
-            activity.runOnUiThread {
+            parent.requireActivity().runOnUiThread {
                 if(tokenCount >= player.maxTokenActive)
                     return@runOnUiThread
                 val token = ClickableToken(container).apply {

@@ -1,7 +1,10 @@
 package com.example.programmertyccon
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.example.programmertyccon.Upgrades.SkillUpgrade
 
 class GameViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+    val player: LiveData<Player> = Player.getInstance()
+
 }

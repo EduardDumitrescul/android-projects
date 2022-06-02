@@ -1,15 +1,10 @@
 package com.example.programmertyccon.Upgrades
 
-import android.content.Context
-import android.media.audiofx.DynamicsProcessing
-import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.programmertyccon.R
 
@@ -46,7 +41,7 @@ class AssistantListAdapter(private val upgradesList: List<AssistantUpgrade>): Re
             titleField.text = assistantUpgrade.title
             infoField.text = assistantUpgrade.info
             priceField.text = assistantUpgrade.price.toString()
-            effectField.text = assistantUpgrade.effect
+            effectField.text = assistantUpgrade.effect.toString()
         }
     }
 

@@ -18,20 +18,28 @@ class InfoPanel(
     private val spawnRateField: TextView = view.findViewById(R.id.spawn_rate_textview)
     private val autoRateField: TextView = view.findViewById(R.id.auto_rate_textview)
 
-    private val updateTimer: Timer = Timer().apply {
-        scheduleAtFixedRate(object: TimerTask() {
-            override fun run() {
-                activity.runOnUiThread {
-                    incomeSpeedField.text = "${player.computeIncomeSpeed()} money/second"
-                    totalAmountField.text = "${player.currentMoney} money"
-                    spawnRateField.text = "${player.tokenSpawnRate} tokens / second"
-                    autoRateField.text = "${player.assistantRate * player.tokenValue} money / second"
-                    multiplierField.text = "x${player.multiplier}"
-                }
-            }
-        },
-        0,
-        100)
+//    private val updateTimer: Timer = Timer().apply {
+//        scheduleAtFixedRate(object: TimerTask() {
+//            override fun run() {
+//                activity.runOnUiThread {
+//                    incomeSpeedField.text = "${player.computeIncomeSpeed()} money/second"
+//                    totalAmountField.text = "${player.currentMoney} money"
+//                    spawnRateField.text = "${player.tokenSpawnRate} tokens / second"
+//                    autoRateField.text = "${player.assistantRate * player.tokenValue} money / second"
+//                    multiplierField.text = "x${player.multiplier}"
+//                }
+//            }
+//        },
+//        0,
+//        100)
+//    }
+
+    fun updateUI() {
+        incomeSpeedField.text = "${player.computeIncomeSpeed()} money/second"
+        totalAmountField.text = "${player.currentMoney} money"
+        spawnRateField.text = "${player.tokenSpawnRate} tokens / second"
+        autoRateField.text = "${player.assistantRate * player.tokenValue} money / second"
+        multiplierField.text = "x${player.multiplier}"
     }
 
 }

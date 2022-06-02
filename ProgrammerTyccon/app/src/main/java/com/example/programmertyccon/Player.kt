@@ -3,15 +3,13 @@ package com.example.programmertyccon
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.programmertyccon.Upgrades.AssistantListAdapter
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.programmertyccon.Upgrades.AssistantUpgrade
 import com.example.programmertyccon.Upgrades.EquipmentUpgrade
 import com.example.programmertyccon.Upgrades.SkillUpgrade
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.*
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.*
 
 private val TAG = "Player"
@@ -34,12 +32,20 @@ class Player private constructor(){
             return INSTANCE ?:
             throw IllegalStateException("Player() has not been initialized")
         }
+
+        fun getLiveData(): LiveData<Player> {
+            if(INSTANCE == null)
+                throw IllegalStateException("Player() has not been initialized")
+            return MutableLiveData<Player>().apply { value = INSTANCE }
+
+        }
     }
+
 
     var lastActiveTime: Long = 0
 
-    var currentMoney: Double = 0.0;
-    var tokenValue: Double = 1.0;
+    var currentMoney: Double = 0.0
+    var tokenValue: Double = 1.0
     // The speed at which are added the tokens (token / second)
     var tokenSpawnRate: Double = 10.0
     var multiplier: Double = 1.0
@@ -48,9 +54,9 @@ class Player private constructor(){
     var lastTokenClick: Long = 0
     var maxTokenActive: Long = 5
 
-    var skillUpgradeList: List<SkillUpgrade> = emptyList()
-    var equipmentUpgradeList: List<EquipmentUpgrade> = emptyList()
-    var assistantUpgradeList: List<AssistantUpgrade> = emptyList()
+    var skillUpgradesList: List<SkillUpgrade> = listOf()
+    var equipmentUpgradeList: List<EquipmentUpgrade> = listOf()
+    var assistantUpgradeList: List<AssistantUpgrade> = listOf()
 
     var incomeDeque: Deque<Pair<Long, Double>> = ArrayDeque()
     var incomeSpeed: Double = 0.0
@@ -76,7 +82,7 @@ class Player private constructor(){
 
     private fun loadData() {
         var string = FileReaderUtil.readFileAsString("skill-test.txt")
-        skillUpgradeList = Gson().fromJson(string, object : TypeToken<List<SkillUpgrade>>() {}.type)
+        skillUpgradesList = Gson().fromJson(string, object : TypeToken<List<SkillUpgrade>>() {}.type)
         string = FileReaderUtil.readFileAsString("equipment-test.txt")
         equipmentUpgradeList =
             Gson().fromJson(string, object : TypeToken<List<EquipmentUpgrade>>() {}.type)
@@ -85,11 +91,16 @@ class Player private constructor(){
             Gson().fromJson(string, object : TypeToken<List<AssistantUpgrade>>() {}.type)
     }
 
+    fun upgradeSkill(index: Int) {
+
+    }
+
     fun tokenClicked() {
         val amount = tokenValue * multiplier
         incomeDeque.addLast(Pair(System.currentTimeMillis(), amount))
         lastTokenClick = System.currentTimeMillis()
         incomeSpeed += amount
         currentMoney += amount
+        Log.d(TAG, "tokenClicked()")
     }
 }

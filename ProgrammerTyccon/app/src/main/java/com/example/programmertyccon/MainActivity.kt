@@ -6,17 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.findNavController
-import com.example.programmertyccon.Upgrades.AssistantListAdapter
 import com.example.programmertyccon.Upgrades.AssistantUpgrade
 import com.example.programmertyccon.Upgrades.EquipmentUpgrade
 import com.example.programmertyccon.Upgrades.SkillUpgrade
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.io.IOException
 import java.io.OutputStreamWriter
+import kotlin.math.pow
 
 private val TAG = "MainActivity"
 
@@ -38,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         val listOfSkillUpgrade: MutableList<SkillUpgrade> = mutableListOf()
         val count = 20
         for(i in 0 until count)
-            listOfSkillUpgrade.add(SkillUpgrade("skill $i"))
+            listOfSkillUpgrade.add(SkillUpgrade("skill $i", effect = 10.0.pow(i.toDouble()), index = i))
 
         val gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -59,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         val list: MutableList<EquipmentUpgrade> = mutableListOf()
         val count = 20
         for(i in 0 until count)
-            list.add(EquipmentUpgrade("equipment $i"))
+            list.add(EquipmentUpgrade("equipment $i", effect = 10.0.pow(i.toDouble()), index = i))
 
         val gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -79,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         val list: MutableList<AssistantUpgrade> = mutableListOf()
         val count = 20
         for(i in 0 until count)
-            list.add(AssistantUpgrade("assistant $i"))
+            list.add(AssistantUpgrade("assistant $i", effect = 10.0.pow(i.toDouble()), index = i))
 
         val gson = GsonBuilder().setPrettyPrinting().create()
 
