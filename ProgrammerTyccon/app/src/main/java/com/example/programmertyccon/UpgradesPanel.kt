@@ -18,7 +18,7 @@ private const val ASSISTANT_TAB = 3
 private const val SETTINGS_TAB = 4
 
 class UpgradesPanel(
-    parent: Fragment,
+    val parent: Fragment,
     view: View
 ): Observer{
 
@@ -111,7 +111,9 @@ class UpgradesPanel(
 
             }
             else -> {
-                recyclerView.adapter?.let { recyclerView.adapter!!.notifyItemRangeChanged(0, it.itemCount) }
+                parent.activity?.runOnUiThread{
+                    recyclerView.adapter?.let { recyclerView.adapter!!.notifyItemRangeChanged(0, it.itemCount) }
+                }
             }
         }
     }

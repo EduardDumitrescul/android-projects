@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.util.*
+import kotlin.math.max
 import kotlin.math.sqrt
 
 private const val TAG = "Player"
@@ -64,11 +65,29 @@ class Player private constructor(): Subject{
         scheduleAtFixedRate(object: TimerTask() {
             override fun run() {
                 computeIncomeSpeed()
-                multiplier = 1 + (sqrt(incomeDeque.size.toDouble()/2).toInt() - 0.1) / 5
-                multiplier = multiplier.coerceAtMost(maxMultiplier)
+                if(incomeDeque.size + 3.6 > multiplier * 3.6) {
+                    multiplier += 0.1
+                }
+                else {
+                    multiplier = max(1.0, multiplier - 0.2)
+                }
+                multiplier.coerceAtMost(maxMultiplier)
+                multiplier.coerceAtLeast(1.0)
+                multiplier = (multiplier * 10).toInt() / 10.0
+
+                notifyObservers()
             }
 
-        }, 0, 100)
+        }, 0, 400)
+    }
+
+    private var autoSaveTimer = Timer().apply {
+        scheduleAtFixedRate(object: TimerTask() {
+            override fun run() {
+                saveData()
+            }
+
+        }, 1000, 1000)
     }
 
     fun computeIncomeSpeed() {
@@ -89,6 +108,10 @@ class Player private constructor(): Subject{
 
         currentMoney = PreferencesUtil.getDouble(CURRENT_MONEY_KEY)
         lastActiveTime = PreferencesUtil.getLong(LAST_ACTIVE_TIME_KEY)
+
+        skillUpgradesList.forEach {
+            tokenValue += it.effect * it.level
+        }
     }
 
     fun saveData() {

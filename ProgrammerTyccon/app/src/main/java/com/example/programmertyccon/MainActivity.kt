@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         Player.getInstance().saveData()
-        Log.d(TAG, "onDestroy()")
+        Log.d(TAG, "onStop()")
 
         PreferencesUtil.save(ResourcesUtil.getString(R.string.data_exists), true)
     }
