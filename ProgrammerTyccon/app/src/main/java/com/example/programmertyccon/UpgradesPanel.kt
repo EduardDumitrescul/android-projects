@@ -1,42 +1,45 @@
 package com.example.programmertyccon
 
-import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.programmertyccon.Upgrades.*
+import com.example.programmertyccon.upgrades.AssistantListAdapter
+import com.example.programmertyccon.upgrades.SkillListAdapter
 
-private val TAG = "UpgradesPanel"
+private const val TAG = "UpgradesPanel"
+
+private const val NO_TAB = 0
+private const val WORK_TAB = 1
+private const val SKILL_TAB = 2
+private const val ASSISTANT_TAB = 3
+private const val SETTINGS_TAB = 4
 
 class UpgradesPanel(
-    private val parent: Fragment,
-    private val view: View
+    parent: Fragment,
+    view: View
 ): Observer{
 
+
     private val player = Player.getInstance()
-    private var container: ConstraintLayout = view.findViewById(R.id.upgrades_panel)
 
     private var callbacks: Callbacks = parent as Callbacks
 
-    private var topContainer: LinearLayout = view.findViewById(R.id.top_container)
-    private var recyclerView: RecyclerView = view.findViewById(R.id.recycler_view) as RecyclerView
+    private var recyclerViewContainer: FrameLayout = view.findViewById(R.id.recycler_view_container)
+    private var recyclerView: RecyclerView = (view.findViewById(R.id.recycler_view) as RecyclerView).apply {
+        itemAnimator = null
+    }
+    private var workContainer: FrameLayout = view.findViewById(R.id.work_panel_container)
+    private var playableArea: PlayableArea = PlayableArea(parent, view)
 
-    private var skillButton: TextView = view.findViewById(R.id.skill_button)
-    private var equipmentButton: TextView = view.findViewById(R.id.equip_button)
-    private var assistantButton: TextView = view.findViewById(R.id.assist_button)
-    private var settingsButton: TextView = view.findViewById(R.id.settings_button)
+    private var skillButton: ImageView = view.findViewById(R.id.skill_button)
+    private var workButton: ImageView = view.findViewById(R.id.work_button)
+    private var assistantButton: ImageView = view.findViewById(R.id.assist_button)
+    private var extraButton: ImageView = view.findViewById(R.id.extra_button)
 
-    private var skillUpgradesSelected: Boolean = false
-    private var equipmentUpgradesSelected: Boolean = false
-    private var assistantUpgradesSelected: Boolean = false
-    private var settingsSelected: Boolean = false
-
-    private var isExtended: Boolean = false;
-    private var fraction = 0.8f
+    private var selectedTab = NO_TAB
 
     init {
         player.addObserver(this)
@@ -44,95 +47,57 @@ class UpgradesPanel(
         onClick()
     }
 
-    // When the toolbar it is clicked, the panel should hide / show
+    //Top bar is clicked
     private fun onClick() {
         skillButton.setOnClickListener {
-            if(skillUpgradesSelected) {
-                callbacks.collapseUpgradesPanel()
-                skillUpgradesSelected = false
-            }
-            else {
-                callbacks.expandUpgradesPanel()
-                skillUpgradesSelected = true
-                equipmentUpgradesSelected = false
-                assistantUpgradesSelected = false
-                settingsSelected = false
-            }
-            updateUI()
+            selectTab(SKILL_TAB)
         }
-        equipmentButton.setOnClickListener {
-            if(equipmentUpgradesSelected) {
-                callbacks.collapseUpgradesPanel()
-                equipmentUpgradesSelected = false;
-            }
-            else {
-                callbacks.expandUpgradesPanel()
-                skillUpgradesSelected = false
-                equipmentUpgradesSelected = true
-                assistantUpgradesSelected = false
-                settingsSelected = false
-            }
-            updateUI()
+        workButton.setOnClickListener {
+            selectTab(WORK_TAB)
         }
         assistantButton.setOnClickListener {
-            if(assistantUpgradesSelected) {
-                callbacks.collapseUpgradesPanel()
-                assistantUpgradesSelected = false
-            }
-            else {
-                callbacks.expandUpgradesPanel()
-                skillUpgradesSelected = false
-                equipmentUpgradesSelected = false
-                assistantUpgradesSelected = true
-                settingsSelected = false
-            }
-            updateUI()
+            selectTab(ASSISTANT_TAB)
         }
-        settingsButton.setOnClickListener {
-            if(settingsSelected) {
-                callbacks.collapseUpgradesPanel()
-                settingsSelected = false
-            }
-            else {
-                callbacks.expandUpgradesPanel()
-                skillUpgradesSelected = false
-                equipmentUpgradesSelected = false
-                assistantUpgradesSelected = false
-                settingsSelected = true
-            }
-            updateUI()
+        extraButton.setOnClickListener {
+            selectTab(SETTINGS_TAB)
         }
     }
 
-    fun updateUI() {
-        Log.d(TAG, "updateUI()")
-        if(skillUpgradesSelected) {
-            recyclerView.adapter = SkillListAdapter(player.skillUpgradesList)
+    private fun selectTab(tab: Int) {
+        if(selectedTab == tab) {
+            callbacks.collapseUpgradesPanel()
+            selectedTab = NO_TAB
+            return
         }
-        else if(assistantUpgradesSelected) {
-            recyclerView.adapter = AssistantListAdapter(player.assistantUpgradeList)
-        }
-        else if(equipmentUpgradesSelected) {
-            recyclerView.adapter = EquipmentListAdapter(player.equipmentUpgradeList)
-        }
-        else {
-            recyclerView.adapter = null
+        else if (selectedTab == NO_TAB)
+            callbacks.expandUpgradesPanel()
+
+        selectedTab = tab
+        recyclerView.adapter = null
+        recyclerViewContainer.visibility = View.INVISIBLE
+        workContainer.visibility = View.INVISIBLE
+        playableArea.disable()
+
+        when(tab) {
+            SKILL_TAB -> {
+                recyclerView.adapter = SkillListAdapter(player.skillUpgradesList)
+                recyclerViewContainer.visibility = View.VISIBLE
+            }
+            WORK_TAB -> {
+                workContainer.visibility = View.VISIBLE
+                playableArea.enable()
+            }
+            ASSISTANT_TAB -> {
+                recyclerView.adapter = AssistantListAdapter(player.assistantUpgradeList)
+                recyclerViewContainer.visibility = View.VISIBLE
+            }
+            SETTINGS_TAB -> {
+                recyclerView.visibility = View.VISIBLE
+            }
         }
     }
 
-    fun extend() {
-        isExtended = true
-    }
-
-    fun collapse() {
-        isExtended = false
-        skillUpgradesSelected = false
-        equipmentUpgradesSelected = false
-        assistantUpgradesSelected = false
-        settingsSelected = false
-    }
-
-    fun isExtended(): Boolean = isExtended
+    fun isExtended(): Boolean = (selectedTab != 0)
 
 
     interface Callbacks {
@@ -141,7 +106,13 @@ class UpgradesPanel(
     }
 
     override fun update() {
-        updateUI()
-    }
+        when(selectedTab) {
+            WORK_TAB -> {
 
+            }
+            else -> {
+                recyclerView.adapter?.let { recyclerView.adapter!!.notifyItemRangeChanged(0, it.itemCount) }
+            }
+        }
+    }
 }

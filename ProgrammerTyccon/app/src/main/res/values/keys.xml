@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="data_exists">Player data is saved in system memory</string>
+    <string name="filename_skill_upgrades">data_skills.txt</string>
+    <string name="filename_assistant_upgrades">data_assistants.txt</string>
+    <string name="filename_player_data">data_player.txt</string>
+</resources>

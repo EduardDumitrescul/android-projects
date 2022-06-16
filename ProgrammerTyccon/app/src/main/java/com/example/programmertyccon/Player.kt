@@ -1,18 +1,27 @@
 package com.example.programmertyccon
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.programmertyccon.Upgrades.AssistantUpgrade
-import com.example.programmertyccon.Upgrades.EquipmentUpgrade
-import com.example.programmertyccon.Upgrades.SkillUpgrade
+import androidx.appcompat.app.AppCompatActivity
+import com.example.programmertyccon.upgrades.AssistantUpgrade
+import com.example.programmertyccon.upgrades.SkillUpgrade
+import com.example.programmertyccon.utils.FileReaderUtil
+import com.example.programmertyccon.utils.FileWriterUtil
+import com.example.programmertyccon.utils.PreferencesUtil
+import com.example.programmertyccon.utils.ResourcesUtil
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import java.io.IOException
+import java.io.OutputStreamWriter
 import java.util.*
+import kotlin.math.sqrt
 
-private val TAG = "Player"
+private const val TAG = "Player"
+private const val LAST_ACTIVE_TIME_KEY = "LAST_ACTIVE_TIME"
+private const val CURRENT_MONEY_KEY = "CURRENT_MONEY"
 
 //Singleton Class that holds the information about the current player
 
@@ -21,10 +30,10 @@ class Player private constructor(): Subject{
         private var INSTANCE: Player? = null
 
         @RequiresApi(Build.VERSION_CODES.O)
-        fun initialize() {
+        fun initialize(context: Context) {
             if(INSTANCE == null) {
                 INSTANCE = Player()
-                INSTANCE!!.loadData()
+                INSTANCE!!.loadData(context)
             }
 
         }
@@ -34,70 +43,90 @@ class Player private constructor(): Subject{
         }
     }
 
-
-    var lastActiveTime: Long = 0
+    private var lastActiveTime: Long = 0
 
     var currentMoney: Double = 100000000.0
     var tokenValue: Double = 1.0
-    // The speed at which are added the tokens (token / second)
     var tokenSpawnRate: Double = 10.0
     var multiplier: Double = 1.0
-    // The rate of automatic token clicks (clicks / second)
-    var assistantRate: Double = 0.0
-    var lastTokenClick: Long = 0
+    var maxMultiplier: Double = 4.0
+    private var lastTokenClick: Long = 0
     var maxTokenActive: Long = 5
 
     var skillUpgradesList: List<SkillUpgrade> = listOf()
-    var equipmentUpgradeList: List<EquipmentUpgrade> = listOf()
     var assistantUpgradeList: List<AssistantUpgrade> = listOf()
 
-    var incomeDeque: Deque<Pair<Long, Double>> = ArrayDeque()
+    private var incomeDeque: Deque<Pair<Long, Double>> = ArrayDeque()
     var incomeSpeed: Double = 0.0
-    // The length of the time interval in which compute the amount of income gained in one second
-    var intervalDuration: Long = 2000
+    private var tapDeque: Deque<Long> = ArrayDeque()
 
-    private var autoIncomeTimer: Timer = Timer().apply {
-        scheduleAtFixedRate(object : TimerTask() {
+    private var incomeSpeedTimer = Timer().apply {
+        scheduleAtFixedRate(object: TimerTask() {
             override fun run() {
-                currentMoney += tokenValue * assistantRate
+                computeIncomeSpeed()
+                multiplier = 1 + (sqrt(incomeDeque.size.toDouble()/2).toInt() - 0.1) / 5
+                multiplier = multiplier.coerceAtMost(maxMultiplier)
             }
-        }, 0, 1000)
+
+        }, 0, 100)
     }
 
-    fun computeIncomeSpeed(): Double {
-        while(!incomeDeque.isEmpty() && System.currentTimeMillis() - incomeDeque.first.first > intervalDuration) {
-
+    fun computeIncomeSpeed() {
+        while(!incomeDeque.isEmpty() && System.currentTimeMillis() - incomeDeque.first.first > 1000) {
             incomeSpeed -= incomeDeque.first.second
             incomeDeque.removeFirst()
         }
-        return incomeSpeed / (intervalDuration / 1000)
+        while(!tapDeque.isEmpty() && System.currentTimeMillis() - tapDeque.first > 60000) {
+            tapDeque.removeFirst()
+        }
     }
 
-    private fun loadData() {
-        var string = FileReaderUtil.readFileAsString("skill-test.txt")
+    private fun loadData(context: Context) {
+        var string = FileReaderUtil.readFileAsString(context.resources.getString(R.string.filename_skill_upgrades))
         skillUpgradesList = Gson().fromJson(string, object : TypeToken<List<SkillUpgrade>>() {}.type)
-        string = FileReaderUtil.readFileAsString("equipment-test.txt")
-        equipmentUpgradeList =
-            Gson().fromJson(string, object : TypeToken<List<EquipmentUpgrade>>() {}.type)
-        string = FileReaderUtil.readFileAsString("assistant-test.txt")
-        assistantUpgradeList =
-            Gson().fromJson(string, object : TypeToken<List<AssistantUpgrade>>() {}.type)
+        string = FileReaderUtil.readFileAsString(context.resources.getString(R.string.filename_assistant_upgrades))
+        assistantUpgradeList = Gson().fromJson(string, object : TypeToken<List<AssistantUpgrade>>() {}.type)
 
+        currentMoney = PreferencesUtil.getDouble(CURRENT_MONEY_KEY)
+        lastActiveTime = PreferencesUtil.getLong(LAST_ACTIVE_TIME_KEY)
+    }
+
+    fun saveData() {
+        val gson = GsonBuilder().setPrettyPrinting().create()
+        Log.d(TAG, "saveData()")
+
+
+        FileWriterUtil.writeString(gson.toJson(skillUpgradesList), ResourcesUtil.getString(R.string.filename_skill_upgrades))
+        FileWriterUtil.writeString(gson.toJson(assistantUpgradeList), ResourcesUtil.getString(R.string.filename_assistant_upgrades))
+
+        PreferencesUtil.save(CURRENT_MONEY_KEY, currentMoney)
+        PreferencesUtil.save(LAST_ACTIVE_TIME_KEY, System.currentTimeMillis())
     }
 
     fun upgradeSkill(index: Int) {
+        currentMoney -= skillUpgradesList[index].price
         skillUpgradesList[index].apply {
             level ++
-            price = (price * 1.2).toInt()
+            price = (price * 1.2).toLong().toDouble()
         }
         tokenValue += skillUpgradesList[index].effect
 
         notifyObservers()
     }
 
+    fun upgradeAssistant(index: Int) {
+        currentMoney -= assistantUpgradeList[index].price
+        assistantUpgradeList[index].apply {
+            level ++;
+            price *= coefficient
+        }
+        notifyObservers()
+    }
+
     fun tokenClicked() {
         val amount = tokenValue * multiplier
         incomeDeque.addLast(Pair(System.currentTimeMillis(), amount))
+        tapDeque.addLast(System.currentTimeMillis())
         lastTokenClick = System.currentTimeMillis()
         incomeSpeed += amount
         currentMoney += amount

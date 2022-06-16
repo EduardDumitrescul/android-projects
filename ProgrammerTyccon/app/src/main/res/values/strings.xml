@@ -1,3 +1,30 @@
 <resources>
-    <string name="app_name">ProgrammerTyccon</string>
+    <string name="app_name">ProgrammerTycoon</string>
+    <string name="tab_title_work">Work</string>
+    <string name="default_textview">TextView</string>
+    <string name="tab_title_extra">Extra</string>
+    <string name="tab_title_skill">Skill</string>
+    <string name="tab_title_assistant">Assistant</string>
+
+    <string name="skill_upgrade_default">Skill</string>
+    <string name="skill_upgrade_1">Just keep trying</string>
+    <string name="skill_upgrade_2">Programming magazines</string>
+    <string name="skill_upgrade_3">Old programming books</string>
+    <string name="skill_upgrade_4">Internet tutorials</string>
+    <string name="skill_upgrade_5">Online courses</string>
+    <string name="skill_upgrade_6">Go to college</string>
+    <string name="skill_upgrade_7">Master\'s degree</string>
+    <string name="skill_upgrade_8">Doctorate degree</string>
+    <string name="skill_upgrade_9">Confidential government technology</string>
+    <string name="skill_upgrade_10">Extraterrestrial intelligence</string>
+
+    <string name="assistant_default">Assistant</string>
+    <string name="assistant_1">Little brother</string>
+    <string name="assistant_2">Highschool friend</string>
+    <string name="assistant_3">Computer Science Freshman</string>
+    <string name="assistant_4">Beginner software engineer</string>
+    <string name="assistant_5">Retired software engineer</string>
+    <string name="assistant_6">Senior software engineer</string>
+    <string name="assistant_7">The Developer</string>
+    <string name="assistant_8">Extra-terrestrial intelligence</string>
 </resources>

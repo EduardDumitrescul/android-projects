@@ -8,5 +8,13 @@
         android:id="@+id/gameFragment"
         android:name="com.example.programmertyccon.GameFragment"
         android:label="coding_area_fragment"
-        tools:layout="@layout/game_fragment" />
+        tools:layout="@layout/game_fragment" >
+        <action
+            android:id="@+id/action_gameFragment_to_settingsDialog"
+            app:destination="@id/settingsDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/settingsDialog"
+        android:name="com.example.programmertyccon.SettingsDialog"
+        android:label="SettingsDialog" />
 </navigation>
