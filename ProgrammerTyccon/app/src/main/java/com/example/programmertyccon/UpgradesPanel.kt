@@ -15,7 +15,7 @@ private const val NO_TAB = 0
 private const val WORK_TAB = 1
 private const val SKILL_TAB = 2
 private const val ASSISTANT_TAB = 3
-private const val SETTINGS_TAB = 4
+private const val EXTRA_TAB = 4
 
 class UpgradesPanel(
     val parent: Fragment,
@@ -59,7 +59,7 @@ class UpgradesPanel(
             selectTab(ASSISTANT_TAB)
         }
         extraButton.setOnClickListener {
-            selectTab(SETTINGS_TAB)
+            selectTab(EXTRA_TAB)
         }
     }
 
@@ -91,7 +91,7 @@ class UpgradesPanel(
                 recyclerView.adapter = AssistantListAdapter(player.assistantUpgradeList)
                 recyclerViewContainer.visibility = View.VISIBLE
             }
-            SETTINGS_TAB -> {
+            EXTRA_TAB -> {
                 recyclerView.visibility = View.VISIBLE
             }
         }
@@ -106,13 +106,17 @@ class UpgradesPanel(
     }
 
     override fun update() {
-        when(selectedTab) {
-            WORK_TAB -> {
+        parent.requireActivity().runOnUiThread {
+            when(selectedTab) {
+                WORK_TAB -> {
 
-            }
-            else -> {
-                parent.activity?.runOnUiThread{
-                    recyclerView.adapter?.let { recyclerView.adapter!!.notifyItemRangeChanged(0, it.itemCount) }
+                }
+                else -> {
+                    recyclerView.adapter?.itemCount?.let {
+                        recyclerView.adapter?.notifyItemRangeChanged(0,
+                            it
+                        )
+                    }
                 }
             }
         }

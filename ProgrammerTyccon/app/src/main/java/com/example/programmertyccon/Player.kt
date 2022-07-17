@@ -105,6 +105,12 @@ class Player private constructor(): Subject{
         skillUpgradesList = Gson().fromJson(string, object : TypeToken<List<SkillUpgrade>>() {}.type)
         string = FileReaderUtil.readFileAsString(context.resources.getString(R.string.filename_assistant_upgrades))
         assistantUpgradeList = Gson().fromJson(string, object : TypeToken<List<AssistantUpgrade>>() {}.type)
+        assistantUpgradeList.forEach {
+            if(it.level > 0)
+                it.updateTimer()
+            var amount = multiplier * it.income * it.multiplier
+            incomeSpeed += amount
+        }
 
         currentMoney = PreferencesUtil.getDouble(CURRENT_MONEY_KEY)
         lastActiveTime = PreferencesUtil.getLong(LAST_ACTIVE_TIME_KEY)
@@ -112,6 +118,8 @@ class Player private constructor(): Subject{
         skillUpgradesList.forEach {
             tokenValue += it.effect * it.level
         }
+
+
     }
 
     fun saveData() {
@@ -139,11 +147,18 @@ class Player private constructor(): Subject{
 
     fun upgradeAssistant(index: Int) {
         currentMoney -= assistantUpgradeList[index].price
-        assistantUpgradeList[index].apply {
-            level ++;
-            price *= coefficient
-        }
+        var amount = multiplier * assistantUpgradeList[index].income * assistantUpgradeList[index].multiplier
+        incomeSpeed -= amount
+
+        assistantUpgradeList[index].upgrade()
+        amount = multiplier * assistantUpgradeList[index].income * assistantUpgradeList[index].multiplier
+        incomeSpeed += amount
         notifyObservers()
+    }
+
+    fun addAssistantIncome(index: Int) {
+        val amount = multiplier * assistantUpgradeList[index].income * assistantUpgradeList[index].multiplier
+        currentMoney += amount
     }
 
     fun tokenClicked() {
